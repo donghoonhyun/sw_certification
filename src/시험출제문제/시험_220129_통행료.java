@@ -96,6 +96,7 @@ public class 시험_220129_통행료 {
 				arrList[b].add(new Node(a, c));
 			}
 
+			// LCA
 			int nodeCnt = 1;
 			LGN = 0;
 			while (nodeCnt < N) {

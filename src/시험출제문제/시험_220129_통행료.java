@@ -101,7 +101,7 @@ public class 시험_220129_통행료 {
 			while (nodeCnt < N) {
 				nodeCnt *= 2;
 				LGN++;
-			}
+			}   
 			
 			parent = new int[LGN + 1][N + 1];
 			arrMax = new int[LGN + 1][N + 1];

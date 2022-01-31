@@ -1,7 +1,6 @@
 package 시험출제문제;
 
 import java.io.*;
-import java.nio.channels.OverlappingFileLockException;
 import java.util.*;
 
 /*20220119토요일 : 통행료 , LCA
@@ -53,9 +52,14 @@ import java.util.*;
 */
 public class 시험_220129_통행료 {
 	static int N, Q;
+	static int LGN, MAX;
+	static int[][] parent, arrMax;
+	static int[] depth;
+	static long[] dist;
+	static long result;
 	static ArrayList<Node>[] arrList;
 
-	private class Node {
+	static class Node {
 		int dest;
 		int cost;
 
@@ -76,29 +80,88 @@ public class 시험_220129_통행료 {
 			st = new StringTokenizer(br.readLine());
 			N = Integer.parseInt(st.nextToken());
 			Q = Integer.parseInt(st.nextToken());
-			
+
 			arrList = new ArrayList[N + 1];
 			for (int i = 0; i <= N; i++) {
-				arrList[i] = new ArrayList<>();				
+				arrList[i] = new ArrayList<>();
 			}
-			
+
 			// 인접리스트
 			for (int i = 1; i < N; i++) {
 				st = new StringTokenizer(br.readLine());
 				int a = Integer.parseInt(st.nextToken());
 				int b = Integer.parseInt(st.nextToken());
 				int c = Integer.parseInt(st.nextToken());
-				arrList[a].add(new Node(b,c));
-				arrList[b].add(new Node(a,c));
+				arrList[a].add(new Node(b, c));
+				arrList[b].add(new Node(a, c));
 			}
-			
+
 			//
+			int nodeCnt = 1;
+			LGN = 0;
+			while (nodeCnt < N) {
+				nodeCnt *= 2;
+				LGN++;
+			}
+			parent = new int[LGN + 1][N + 1];
+			arrMax = new int[LGN + 1][N + 1];
+			depth = new int[N + 1];
+			Arrays.fill(depth, -1);
+			dist = new long[N + 1];
+
+			findAncestor();
 			
-			
-			
+			// 질의 Q
+			result = 0;
+			for (int i = 0; i < Q; i++) {
+				st = new StringTokenizer(br.readLine().trim());
+	            int a = Integer.parseInt(st.nextToken());
+	            int b = Integer.parseInt(st.nextToken());
+	            int lca = LCA(a, b);
+	            result += dist[a] + dist[b] - 2*dist[lca] - MAX; 
+			}
+			bw.write("#" + tc + result + "\n");
+			bw.flush();
 
 		} // text case
 
+	} // main
+
+	static int LCA(int x, int y) {
+		MAX = Integer.MIN_VALUE;
+		if(depth[x] > depth[y]) {
+			int tmp = x;
+			x = y;
+			y=tmp;			
+		}
+		
+		for (int i = LGN; i >= 0; i--) {
+			if(depth[y]-depth[x] >= (1<<i)) {
+				y = parent[i][y];
+			}
+		}
+		
+		if(x==y) return x;
+		
+		for(int i=LGN; i>=0; i--) {
+			if(parent[i][x] != parent[i][y]) {
+				MAX = Math.max(MAX, Math.max(arrMax[i][x], arrMax[i][y]));
+				x = parent[i][x];
+				y = parent[i][y];
+			}
+		}
+		
+		MAX = Math.max(MAX, Math.max(arrMax[0][x], arrMax[0][y]));
+		return parent[0][x];
+	}
+
+	static void findAncestor() {
+		for (int k = 1; k <= LGN; k++) {
+			for (int v = 1; v <= N; v++) {
+				parent[k][v] = parent[k - 1][parent[k - 1][v]];
+				arrMax[k][v] = Math.max(arrMax[k - 1][v], arrMax[k - 1][parent[k - 1][v]]);
+			}
+		}
 	}
 
 }

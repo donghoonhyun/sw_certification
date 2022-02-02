@@ -95,12 +95,11 @@ public class 시험_220129_통행료 {
 				arrList[a].add(new Node(b, c));
 				arrList[b].add(new Node(a, c));
 			}
-
-			// LCA
+			
 			int nodeCnt = 1;
 			LGN = 0;
 			while (nodeCnt < N) {
-				nodeCnt *= 2;
+				nodeCnt <<= 1;
 				LGN++;
 			}   
 			
@@ -110,7 +109,10 @@ public class 시험_220129_통행료 {
 			
 			Arrays.fill(depth, -1);
 			dist = new long[N + 1];
+			
+			// parent배열 만들기
 			bfs(1);
+			// LCA
 			findAncestor();
 
 			result = 0;

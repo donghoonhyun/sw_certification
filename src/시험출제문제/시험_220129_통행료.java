@@ -86,7 +86,7 @@ public class 시험_220129_통행료 {
 			for (int i = 0; i <= N; i++)
 				arrList[i] = new ArrayList<>();
 			
-			// 인접리스트
+			// 1.인접리스트
 			for (int i = 1; i < N; i++) {
 				st = new StringTokenizer(br.readLine().trim());
 				int a = Integer.parseInt(st.nextToken());
@@ -103,6 +103,7 @@ public class 시험_220129_통행료 {
 				LGN++;
 			}   
 			
+			// 2.전처리
 			parent = new int[LGN + 1][N + 1];
 			arrMax = new int[LGN + 1][N + 1];
 			depth = new int[N + 1];
@@ -110,11 +111,12 @@ public class 시험_220129_통행료 {
 			Arrays.fill(depth, -1);
 			dist = new long[N + 1];
 			
-			// parent배열 만들기
+			// 조상parent배열 초기값(depth=0) 만들기, 전노드 탐색
 			bfs(1);
-			// LCA
+			// 전체 조상(parent), 깊이(depth), 거리비용값(dist) 배열테이블 채우기
 			findAncestor();
-
+			
+			// 3.질의 LCA 
 			result = 0;
 			for (int i = 0; i < Q; i++) {
 				st = new StringTokenizer(br.readLine().trim());
@@ -140,7 +142,7 @@ public class 시험_220129_통행료 {
 				depth[next.dest] = depth[now] + 1;
 				parent[0][next.dest] = now;
 				dist[next.dest] = dist[now] + next.cost;
-				arrMax[0][next.dest] = next.cost;
+				arrMax[0][next.dest] = next.cost;         // 최대값 세팅  
 				q.add(next.dest);
 			}
 		}
@@ -157,12 +159,13 @@ public class 시험_220129_통행료 {
 
 	static int LCA(int x, int y) {
 		MAX = Integer.MIN_VALUE;
+		// x를 위로 swap
 		if (depth[x] > depth[y]) {
 			int tmp = x;
 			x = y;
 			y = tmp;
 		}
-
+		// 깊이 맞추기 
 		for (int i = LGN; i >= 0; i--)
 			if (depth[y] - depth[x] >= (1 << i)) {
 				MAX = Math.max(MAX, arrMax[i][y]);
@@ -170,8 +173,8 @@ public class 시험_220129_통행료 {
 			}
 
 		if (x == y)
-			return x;
-
+			return x;		
+		// 끌어 올리기
 		for (int i = LGN; i >= 0; i--)
 			if (parent[i][x] != parent[i][y]) {
 				MAX = Math.max(MAX, Math.max(arrMax[i][x], arrMax[i][y]));
